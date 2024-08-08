@@ -11,11 +11,14 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <header class="header">
-        <a href="index.html">
-            <img class="header__logo" src="img/logo.png" alt="Logotipo">
-        </a>
-    </header>
+    <header>
+		<nav>
+			<a href="./index.html"><img src="./img/logo.png" alt="Logo" id="logo"></a>
+			<div>
+				<a href="#" id="cart"><img src="./img/carrito.png" alt=""><span id="cuenta-carrito">0</span></a>
+			</div>
+		</nav>
+	</header>
 
     <nav class="navegacion">
         <a class="navegacion__enlace navegacion__enlace--activo" href="index.html">Tienda</a>
@@ -24,9 +27,6 @@
 
     <main class="contenedor">
         <h1 class="">Nuestros Productos</h1>
-        <div id="contenedor__contador-carrito">
-            <img id="imagen__carrito" src="./img/carrito.png" alt="carrito"><span id="contador__carrito">0</span>
-        </div>
         <div id="filtros">
             <div> <!-- BARRA DE BUSQUEDA, BOTON BUSCAR Y RESET -->
                 <input id="inputFiltros" class="formulario__campo" type="text" placeholder="Buscar">

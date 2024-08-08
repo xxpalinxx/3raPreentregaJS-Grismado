@@ -99,7 +99,6 @@ function agregarAlCarrito(e, productos) {
     }else{
         carrito.push({
             id: productoBuscado.id,
-            img: `./img/${productoBuscado.id}.jpg`,
             nombre: productoBuscado.nombre,
             precioUnitario: productoBuscado.precio,
             unidades: 1,
@@ -117,7 +116,6 @@ function renderizarCarrito(carrito) {
     carrito.forEach(producto => {
         contenedorCarrito.innerHTML += `
             <div class="tarjeta__producto__carrito">
-                <img class=producto__imagen scr=${producto.img}>
                 <p>ID: ${producto.id}</p>
                 <p>Nombre: ${producto.nombre}</p>
                 <p>Precio Unitario: $${producto.precioUnitario}</p>
@@ -125,19 +123,13 @@ function renderizarCarrito(carrito) {
                 <p>Subtotal: $${producto.subtotal}</p>
             </div>
         `
-        /* contenedorCarrito.innerHTML = `
-            <div class="tarjeta__producto__carrito">
-                <img class=producto__imagen scr="./img/${producto.id}.jpg">
-            
-            </div>
-        ` */
     })
 }
 
 function actualizarContadorCarrito() {
     let memoria = JSON.parse(localStorage.getItem("carrito")) || []
     let cuenta = memoria.reduce((acum, current) => acum + current.unidades, 0)
-    let contadorCarrito = document.getElementById("contador__carrito")
+    let contadorCarrito = document.getElementById("cuenta-carrito")
     contadorCarrito.innerText = cuenta
 }
 
@@ -162,7 +154,20 @@ function verOcultar(e) {
     contenedorCarrito.classList.toggle("oculto")
     contenedorProductos.classList.toggle("oculto")
 }
+// mostrarOcultar carrito es el equivalente a la funcion verOcultar, solo que no necesita del parametro e
+function mostrarOcultarCarrito() {
+    let contenedorProductos = document.getElementById("grid")
+    let contenedorCarrito = document.getElementById("paginaCarrito")
+    let botonCarrito = document.getElementById("btnCarrito")
 
+    if (contenedorCarrito.className === "oculto") {
+        botonCarrito.innerText = "PRODUCTOS"
+    } else {
+        botonCarrito.innerText = "CARRITO"
+    }
+    contenedorCarrito.classList.toggle("oculto")
+    contenedorProductos.classList.toggle("oculto")
+}
 /** ---------------------------------------EJERCUCION SCRIPT---------------------------------------- */
 function main(remeras){
     crearTarjetasProductos(remeras)
@@ -182,6 +187,9 @@ function main(remeras){
 
     let botonComprar = document.getElementById("btnComprar")
     botonComprar.addEventListener("click", () => finalizarCompra())
+
+    let contadorCarritoCompras = document.getElementById("cart")
+    contadorCarritoCompras.addEventListener("click", mostrarOcultarCarrito)
 }
 
 main(remeras)
