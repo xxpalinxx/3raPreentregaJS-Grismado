@@ -54,9 +54,6 @@ function crearFiltrosPorColor(listaProductos) {
             botonFiltroColor.addEventListener("click", (e) => filtrarPorColor(e, listaProductos))
 
             contenedorFiltros.appendChild(botonFiltroColor)
-            /* contenedorFiltros.innerHTML += `
-                <button id=btn${producto.color} class='formulario__submit btnFiltros'>${producto.color}</button>
-            ` */
         }
     })
 
@@ -74,20 +71,29 @@ function filtrarPorColor(e, productos) {
     crearTarjetasProductos(produtosFiltrados)
 }
 
-/**------------------------------------------------CARRITO----------------------------------------------- */
+/**--------------------------------------------LOCALSTORAGE---------------------------------------------- */
 function setearCarrito(carrito) {
     let carritoJSON = JSON.stringify(carrito)
     localStorage.setItem("carrito",carritoJSON)
 }
 
 function obtenerCarrito() {
-    let carrito =[]
+    let carrito = []
     if (localStorage.getItem("carrito")) {
         carrito = JSON.parse(localStorage.getItem("carrito"))
     }
     return carrito
 }
 
+function setearTotal(total) {
+    localStorage.setItem("total", total)
+}
+
+function obtenerTotal() {
+    let total = localStorage.getItem("total");
+    return total ? Number(total) : 0
+}
+/**------------------------------------------------CARRITO----------------------------------------------- */
 function agregarAlCarrito(e, productos) {
     let carrito = obtenerCarrito()
     let idProducto = Number(e.target.id)
@@ -106,8 +112,10 @@ function agregarAlCarrito(e, productos) {
         })
     }
     setearCarrito(carrito)
-    renderizarCarrito(carrito)
     actualizarContadorCarrito()
+    renderizarCarrito(carrito)
+    calcularTotal(carrito)
+    mostrarTotal()
 }
 
 function renderizarCarrito(carrito) {
@@ -123,7 +131,19 @@ function renderizarCarrito(carrito) {
                 <p>Subtotal: $${producto.subtotal}</p>
             </div>
         `
-    })
+        })
+}
+
+function calcularTotal(carrito) {
+    let total = carrito.reduce((acum, producto) => acum + producto.subtotal, 0)
+    localStorage.setItem("total", total)
+    mostrarTotal()
+}
+
+function mostrarTotal() {
+    let total = obtenerTotal()
+    let contenedorTotal = document.getElementById("total")
+    contenedorTotal.innerHTML = total > 0 ? `<h3>TOTAL: $${total}</h3>` : ""
 }
 
 function actualizarContadorCarrito() {
@@ -137,8 +157,10 @@ function actualizarContadorCarrito() {
 function finalizarCompra() {
     alert("GRACIAS POR SU COMPRA")
     localStorage.removeItem("carrito")
+    localStorage.removeItem("total")
     renderizarCarrito([])
     actualizarContadorCarrito()
+    mostrarTotal()
 }
 
 /**----------------------------------------VER PRODUCTOS CARRITO------------------------------------- */
@@ -176,6 +198,7 @@ function main(remeras){
     let carrito = obtenerCarrito()
     renderizarCarrito(carrito)
     actualizarContadorCarrito()
+    
 
     let inputFiltro = document.getElementById("inputFiltros")
     let btnBuscar = document.getElementById("btnBuscar")
