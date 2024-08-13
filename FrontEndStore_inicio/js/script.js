@@ -1,19 +1,21 @@
 let remeras = [
     {id: 1, img:"./img/1.jpg" , nombre: "vuejs", precio: 25, color: "gris"},
     {id: 2, img:"./img/2.jpg" , nombre: "angularjs", precio: 25, color: "gris"},
-    {id: 3, img:"./img/3.jpg" , nombre: "react", precio: 25, color: "negro"},
+    {id: 3, img:"./img/3.jpg" , nombre: "react", precio: 40, color: "negro"},
     {id: 4, img:"./img/4.jpg" , nombre: "redux", precio: 25, color: "amarillo"},
-    {id: 5, img:"./img/5.jpg" , nombre: "nodejs", precio: 25, color: "gris"},
+    {id: 5, img:"./img/5.jpg" , nombre: "nodejs", precio: 35, color: "gris"},
     {id: 6, img:"./img/6.jpg" , nombre: "sass", precio: 25, color: "negro"},
-    {id: 7, img:"./img/7.jpg" , nombre: "html5", precio: 25, color: "gris"},
-    {id: 8, img:"./img/8.jpg" , nombre: "github", precio: 25, color: "violeta"},
+    {id: 7, img:"./img/7.jpg" , nombre: "html5", precio: 15, color: "gris"},
+    {id: 8, img:"./img/8.jpg" , nombre: "github", precio: 10, color: "violeta"},
     {id: 9, img:"./img/9.jpg" , nombre: "bulma", precio: 25, color: "rojo"},
-    {id: 10, img:"./img/10.jpg" , nombre: "typescript", precio: 25, color: "blanco"},
+    {id: 10, img:"./img/10.jpg" , nombre: "typescript", precio: 35, color: "blanco"},
     {id: 11, img:"./img/11.jpg" , nombre: "drupal", precio: 25, color: "azul"},
-    {id: 12, img:"./img/12.jpg" , nombre: "javascript", precio: 25, color: "amarillo"},
+    {id: 12, img:"./img/12.jpg" , nombre: "javascript", precio: 45, color: "amarillo"},
     {id: 13, img:"./img/13.jpg" , nombre: "graphql", precio: 25, color: "negro"},
-    {id: 14, img:"./img/14.jpg" , nombre: "wordpress", precio: 10, color: "rojo"}
+    {id: 14, img:"./img/14.jpg" , nombre: "wordpress", precio: 25, color: "rojo"}
 ]
+
+
 
 /**----------------------------------------------------PRODUCTOS---------------------------------------- */
 function crearTarjetasProductos(remeras) {
@@ -51,24 +53,27 @@ function crearFiltrosPorColor(listaProductos) {
             botonFiltroColor.value = producto.color
             botonFiltroColor.className = "formulario__submit"
 
-            botonFiltroColor.addEventListener("click", (e) => filtrarPorColor(e, listaProductos))
+            botonFiltroColor.addEventListener("click", (e) => filtrarPorColor(e, listaProductos, `${producto.color}`))
 
             contenedorFiltros.appendChild(botonFiltroColor)
         }
     })
 
     let botonTodos = document.getElementById("todos")
-    botonTodos.addEventListener("click", (e) => filtrarPorColor(e, listaProductos))
+    let textoToast = "Filtro reseteado"
+    botonTodos.addEventListener("click", (e) => filtrarPorColor(e, listaProductos, textoToast))
 }
 
 function filtrarPorNombre(productos, valorBusqueda) {
     let productosFiltrados = productos.filter(producto => producto.nombre.includes(valorBusqueda))
     crearTarjetasProductos(productosFiltrados)
+    alertaToast(`Busqueda realizada: ${valorBusqueda}`)
 }
 
-function filtrarPorColor(e, productos) {
+function filtrarPorColor(e, productos, texto) {
     let produtosFiltrados = productos.filter(producto => producto.color.includes(e.target.value))
     crearTarjetasProductos(produtosFiltrados)
+    alertaToast(texto)
 }
 
 /**--------------------------------------------LOCALSTORAGE---------------------------------------------- */
@@ -116,6 +121,7 @@ function agregarAlCarrito(e, productos) {
     renderizarCarrito(carrito)
     calcularTotal(carrito)
     mostrarTotal()
+    alertaToast('Producto agregado al carrito')
 }
 
 function renderizarCarrito(carrito) {
@@ -155,7 +161,7 @@ function actualizarContadorCarrito() {
 
 /**---------------------------------------------COMPRAR---------------------------------------------- */
 function finalizarCompra() {
-    alert("GRACIAS POR SU COMPRA")
+    alertaCartel()
     localStorage.removeItem("carrito")
     localStorage.removeItem("total")
     renderizarCarrito([])
@@ -164,19 +170,6 @@ function finalizarCompra() {
 }
 
 /**----------------------------------------VER PRODUCTOS CARRITO------------------------------------- */
-function verOcultar(e) {
-    let contenedorProductos = document.getElementById("grid")
-    let contenedorCarrito = document.getElementById("paginaCarrito")
-
-    if(contenedorCarrito.className === "oculto") {
-        e.target.innerText = "PRODUCTOS"
-    }else{
-        e.target.innerText = "CARRITO"
-    }
-    contenedorCarrito.classList.toggle("oculto")
-    contenedorProductos.classList.toggle("oculto")
-}
-// mostrarOcultar carrito es el equivalente a la funcion verOcultar, solo que no necesita del parametro e
 function mostrarOcultarCarrito() {
     let contenedorProductos = document.getElementById("grid")
     let contenedorCarrito = document.getElementById("paginaCarrito")
@@ -184,12 +177,46 @@ function mostrarOcultarCarrito() {
 
     if (contenedorCarrito.className === "oculto") {
         botonCarrito.innerText = "PRODUCTOS"
+        alertaToast("Carrito mostrado")
     } else {
         botonCarrito.innerText = "CARRITO"
+        alertaToast("Productos mostrados")
     }
     contenedorCarrito.classList.toggle("oculto")
     contenedorProductos.classList.toggle("oculto")
 }
+
+/** ---------------------------------------SWEET ALERT----------------------------------------------- */
+const Toast = Swal.mixin({
+    toast: true,
+    position: "bottom-end",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+    }
+})
+
+function alertaToast(titulo) {
+    Toast.fire({
+        icon:'success',
+        title: titulo
+    })
+}
+
+function alertaCartel() {
+    Swal.fire({
+        title: 'Compra realizada con exito',
+        text: 'Gracias por su compra',
+        icon: 'success',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#FFCE00',
+        color: 'black'
+    })
+}
+
 /** ---------------------------------------EJERCUCION SCRIPT---------------------------------------- */
 function main(remeras){
     crearTarjetasProductos(remeras)
@@ -206,7 +233,7 @@ function main(remeras){
     btnBuscar.addEventListener("click", () => filtrarPorNombre(remeras, inputFiltro.value))
 
     let btnVerCarrito = document.getElementById("btnCarrito")
-    btnVerCarrito.addEventListener("click", (e) => verOcultar(e))
+    btnVerCarrito.addEventListener("click", mostrarOcultarCarrito)
 
     let botonComprar = document.getElementById("btnComprar")
     botonComprar.addEventListener("click", () => finalizarCompra())
