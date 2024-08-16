@@ -15,8 +15,6 @@ let remeras = [
     {id: 14, img:"./img/14.jpg" , nombre: "wordpress", precio: 25, color: "rojo"}
 ]
 
-
-
 /**----------------------------------------------------PRODUCTOS---------------------------------------- */
 function crearTarjetasProductos(remeras) {
     let contenedorProductos = document.getElementById("grid")
@@ -65,7 +63,8 @@ function crearFiltrosPorColor(listaProductos) {
 }
 
 function filtrarPorNombre(productos, valorBusqueda) {
-    let productosFiltrados = productos.filter(producto => producto.nombre.includes(valorBusqueda))
+    let valorBusquedaLower = valorBusqueda.toLowerCase()
+    let productosFiltrados = productos.filter(producto => producto.nombre.toLowerCase().includes(valorBusquedaLower))
     crearTarjetasProductos(productosFiltrados)
     alertaToast(`Busqueda realizada: ${valorBusqueda}`)
 }
@@ -174,16 +173,23 @@ function mostrarOcultarCarrito() {
     let contenedorProductos = document.getElementById("grid")
     let contenedorCarrito = document.getElementById("paginaCarrito")
     let botonCarrito = document.getElementById("btnCarrito")
+    let busquedaReset = document.getElementById("busqueda__reset")
+    let filtrosColor = document.getElementById("filtros__color")
+    let contenedorFiltros = document.getElementById("filtros")
 
     if (contenedorCarrito.className === "oculto") {
         botonCarrito.innerText = "PRODUCTOS"
+        contenedorFiltros.classList.add("rowReverse")
         alertaToast("Carrito mostrado")
     } else {
         botonCarrito.innerText = "CARRITO"
+        contenedorFiltros.classList.remove("rowReverse")
         alertaToast("Productos mostrados")
     }
     contenedorCarrito.classList.toggle("oculto")
     contenedorProductos.classList.toggle("oculto")
+    busquedaReset.classList.toggle("oculto")
+    filtrosColor.classList.toggle("oculto")
 }
 
 /** ---------------------------------------SWEET ALERT----------------------------------------------- */
