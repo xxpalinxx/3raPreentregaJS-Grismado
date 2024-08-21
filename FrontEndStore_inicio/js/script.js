@@ -124,19 +124,90 @@ function agregarAlCarrito(e, productos) {
 }
 
 function renderizarCarrito(carrito) {
-    let contenedorCarrito = document.getElementById("contenedorCarrito")
+    let contenedorCarrito = document.getElementById("contenedorCarrito");
     contenedorCarrito.innerHTML = ""
+
     carrito.forEach(producto => {
         contenedorCarrito.innerHTML += `
-            <div class="tarjeta__producto__carrito">
+            <div id="tc${producto.id}" class="tarjeta__producto__carrito">
+                <img src="./img/${producto.id}.jpg" alt="Producto ${producto.nombre}">
                 <p>ID: ${producto.id}</p>
                 <p>Nombre: ${producto.nombre}</p>
                 <p>Precio Unitario: $${producto.precioUnitario}</p>
-                <p>Unidades: ${producto.unidades}</p>
+                <div class="cantidades">
+                    <button id="br${producto.id}" class="formulario__submit btn__cantidad">-</button>
+                    <p>${producto.unidades}</p>
+                    <button id="bs${producto.id}" class="formulario__submit btn__cantidad">+</button>
+                </div>
                 <p>Subtotal: $${producto.subtotal}</p>
+                <button id="be${producto.id}" class="formulario__submit btn__cantidad">Eliminar</button>
             </div>
         `
-        })
+    })
+
+    carrito.forEach(producto => {
+        let botonEliminar = document.getElementById(`be${producto.id}`)
+        botonEliminar.addEventListener("click", (e) => eliminarProductoCarrito(e))
+
+        let botonSumar = document.getElementById(`bs${producto.id}`)
+        botonSumar.addEventListener("click", (e) => sumarUnidad(e))
+
+        let botonRestar = document.getElementById(`br${producto.id}`)
+        botonRestar.addEventListener("click", (e) => restarUnidad(e))
+    });
+}
+
+
+
+/*---------------------------------------------------BOTONES-------------------------------------------*/
+function sumarUnidad(e) {
+    let id = Number(e.target.id.substring(2))
+    let carrito = obtenerCarrito()
+    let productoBuscado = carrito.find(producto => producto.id === id)
+    
+    if (productoBuscado) {
+        productoBuscado.unidades++
+        productoBuscado.subtotal = productoBuscado.unidades * productoBuscado.precioUnitario
+        setearCarrito(carrito)
+        renderizarCarrito(carrito)
+        actualizarContadorCarrito()
+        calcularTotal(carrito)
+        mostrarTotal()
+        alertaToast('Unidad agregada del carrito')
+    }
+}
+
+function restarUnidad(e) {
+    let id = Number(e.target.id.substring(2))
+    let carrito = obtenerCarrito()
+    let productoBuscado = carrito.find(producto => producto.id === id)
+    
+    if (productoBuscado && productoBuscado.unidades > 1) {
+        productoBuscado.unidades--
+        productoBuscado.subtotal = productoBuscado.unidades * productoBuscado.precioUnitario
+        setearCarrito(carrito)
+        renderizarCarrito(carrito)
+        actualizarContadorCarrito()
+        calcularTotal(carrito)
+        mostrarTotal()
+        alertaToast('Unidad quitada del carrito')
+    } else if (productoBuscado.unidades === 1) {
+        eliminarProductoCarrito(e)
+    }
+}
+
+function eliminarProductoCarrito(e) {
+    let id = Number(e.target.id.substring(2))
+    let carrito = obtenerCarrito()
+
+    carrito = carrito.filter(producto => producto.id !== id)
+    
+    setearCarrito(carrito)
+    renderizarCarrito(carrito)
+    actualizarContadorCarrito()
+    calcularTotal(carrito)
+    mostrarTotal()
+    alertaToast('Producto eliminado del carrito')
 }
 
 function calcularTotal(carrito) {
@@ -160,12 +231,18 @@ function actualizarContadorCarrito() {
 
 /**---------------------------------------------COMPRAR---------------------------------------------- */
 function finalizarCompra() {
-    alertaCartel()
-    localStorage.removeItem("carrito")
-    localStorage.removeItem("total")
-    renderizarCarrito([])
-    actualizarContadorCarrito()
-    mostrarTotal()
+    let carrito = obtenerCarrito()
+
+    if (carrito.length === 0){
+        alertaToast("El carrito esta vacio")
+    } else {
+        alertaCartel()
+        localStorage.removeItem("carrito")
+        localStorage.removeItem("total")
+        renderizarCarrito([])
+        actualizarContadorCarrito()
+        mostrarTotal()
+    }
 }
 
 /**----------------------------------------VER PRODUCTOS CARRITO------------------------------------- */

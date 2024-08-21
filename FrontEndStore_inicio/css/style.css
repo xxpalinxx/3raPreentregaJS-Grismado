@@ -274,6 +274,19 @@ height: 25px;
 } 
 
 /** TARJETA PRODUCTO CARRITO **/
+.cantidades {
+    display: flex;
+    align-items: center;
+}
+
+.btn__cantidad {
+    height: 0.7rem;
+    width: 0.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 #filtros {
     display: flex;
     justify-content: space-between;
@@ -284,8 +297,13 @@ height: 25px;
     display: flex;
     justify-content: space-between;
     margin: 1rem;
+    align-items: center;
 }
 
+.tarjeta__producto__carrito img{
+    width: 4rem;
+    height: 4rem;
+}
 .tarjeta__producto__carrito p {
     flex: 1;
     margin: 0 0.5rem;
@@ -294,6 +312,7 @@ height: 25px;
     color: var(--blanco);
     text-align: center;
     box-sizing: border-box;
+    align-items: center;
 }
 
 .oculto {
